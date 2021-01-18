@@ -13,7 +13,13 @@ import org.scalatest.refspec.RefSpec
 import shapeless.HNil
 
 class FoldableSpec extends RefSpec with Checkers {
+  def zhaleTest = {
+        println("zhaleTest") // this won't run ???
+        val res = 1
+  }
+
   def `foldLeft function` = {
+    println("zhale:foldLeft test")
     check(
       Test.testSuccess(
         FoldableSection.foldableFoldLeft _,

@@ -51,6 +51,10 @@ object FoldableSection
    *
    */
   def foldableFoldLeft(res0: Int, res1: String) = {
+    println("zhale:foldableFoldLeft") // called 20 times ?!
+    println("zhale:" + Foldable[List].foldLeft(List(1, 2, 3), 0)(_ + _))
+    println("zhale:" + List(1, 2, 3).foldLeft(0)(_ + _))
+
     Foldable[List].foldLeft(List(1, 2, 3), 0)(_ + _) should be(res0)
     Foldable[List].foldLeft(List("a", "b", "c"), "")(_ + _) should be(res1)
   }
@@ -95,6 +99,7 @@ object FoldableSection
    * instead of `Monoid[G]`.
    */
   def foldableFoldk(res0: List[Int], res1: Option[String]) = {
+    println("zhale:foldableFoldk()")
     Foldable[List].foldK(List(List(1, 2), List(3, 4, 5))) should be(res0)
     Foldable[List].foldK(List(None, Option("two"), Option("three"))) should be(res1)
   }
