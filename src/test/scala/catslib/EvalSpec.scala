@@ -18,43 +18,44 @@ package catslib
 
 import org.scalacheck.ScalacheckShapeless._
 import org.scalaexercises.Test
-import org.scalatestplus.scalacheck.Checkers
 import org.scalatest.refspec.RefSpec
+import org.scalatestplus.scalacheck.Checkers
 import shapeless.HNil
 
-class ValidatedSpec extends RefSpec with Checkers {
-  def `with no errors` = {
+class EvalSpec extends RefSpec with Checkers {
+
+  def `eager eval (now) is evaluated` = {
     check(
       Test.testSuccess(
-        ValidatedSection.noErrors _,
-        true :: "127.0.0.1" :: 1337 :: HNil
+        EvalSection.nowEval _,
+        List(1, 2, 3) :: HNil
       )
     )
   }
 
-  def `with accumulating errors` = {
+  def `later eval is only evaluated` = {
     check(
       Test.testSuccess(
-        ValidatedSection.someErrors _,
-        false :: true :: HNil
+        EvalSection.laterEval _,
+        List(1, 2) :: 1 :: HNil
       )
     )
   }
 
-  def `sequential validation` = {
+  def `always eval is only evaluated` = {
     check(
       Test.testSuccess(
-        ValidatedSection.sequentialValidation _,
-        false :: true :: HNil
+        EvalSection.alwaysEval _,
+        4 :: List(1, 2, 3, 4) :: 5 :: HNil
       )
     )
   }
 
-  def `validation with either` = {
+  def `defer eval chaining with flatMap` = {
     check(
       Test.testSuccess(
-        ValidatedSection.validatedAsEither _,
-        false :: true :: HNil
+        EvalSection.deferEval _,
+        List(0, 0, 0) :: HNil
       )
     )
   }

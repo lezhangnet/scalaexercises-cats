@@ -1,7 +1,17 @@
 /*
- *  scala-exercises - exercises-cats
- *  Copyright (C) 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2020 47 Degrees Open Source <https://www.47deg.com>
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package catslib
@@ -10,7 +20,8 @@ import cats.kernel.Semigroup
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.flatspec.AnyFlatSpec
 
-/** A semigroup for some given type A has a single operation
+/**
+ * A semigroup for some given type A has a single operation
  * (which we will call `combine`), which takes two values of type A, and
  * returns a value of type A. This operation must be guaranteed to be
  * associative. That is to say that:
@@ -42,9 +53,9 @@ object SemigroupSection
     with Matchers
     with org.scalaexercises.definitions.Section {
 
-  /** Now that you've learned about the `Semigroup` instance for `Int` try to
+  /**
+   * Now that you've learned about the `Semigroup` instance for `Int` try to
    * guess how it works in the following examples:
-   *
    */
   def semigroupCombine(res0: Int, res1: List[Int], res2: Option[Int], res3: Option[Int]) = {
     import cats.implicits._
@@ -55,7 +66,8 @@ object SemigroupSection
     Semigroup[Option[Int]].combine(Option(1), None) should be(res3)
   }
 
-  /** And now try a slightly more complex combination:
+  /**
+   * And now try a slightly more complex combination:
    */
   def semigroupCombineComplex(res0: Int) = {
     import cats.implicits._
@@ -64,7 +76,8 @@ object SemigroupSection
 
   }
 
-  /** Many of these types have methods defined directly on them,
+  /**
+   * Many of these types have methods defined directly on them,
    * which allow for such combining, e.g. `++` on List, but the
    * value of having a `Semigroup` type class available is that these
    * compose, so for instance, we can say
@@ -94,7 +107,8 @@ object SemigroupSection
     combinedMap.get("foo") should be(Some(res0))
   }
 
-  /** There is inline syntax available for `Semigroup`. Here we are
+  /**
+   * There is inline syntax available for `Semigroup`. Here we are
    * following the convention from scalaz, that `|+|` is the
    * operator from `Semigroup`.
    *
@@ -107,7 +121,8 @@ object SemigroupSection
       res0: Option[Int],
       res1: Option[Int],
       res2: Option[Int],
-      res3: Option[Int]) = {
+      res3: Option[Int]
+  ) = {
     import cats.implicits._
 
     val one: Option[Int] = Option(1)

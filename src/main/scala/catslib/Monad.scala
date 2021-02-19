@@ -1,7 +1,17 @@
 /*
- *  scala-exercises - exercises-cats
- *  Copyright (C) 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2020 47 Degrees Open Source <https://www.47deg.com>
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package catslib
@@ -11,7 +21,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 import MonadHelpers._
 
-/** `Monad` extends the `Applicative` type class with a
+/**
+ * `Monad` extends the `Applicative` type class with a
  * new function `flatten`. Flatten takes a value in a nested context (eg.
  * `F[F[A]]` where F is the context) and "joins" the contexts together so
  * that we have a single context (ie. `F[A]`).
@@ -20,7 +31,8 @@ import MonadHelpers._
  */
 object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.definitions.Section {
 
-  /** The name `flatten` should remind you of the functions of the same name on many
+  /**
+   * The name `flatten` should remind you of the functions of the same name on many
    * classes in the standard library.
    */
   def flattenRecap(res0: Option[Int], res1: Option[Int], res2: List[Int]) = {
@@ -29,7 +41,8 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     List(List(1), List(2, 3)).flatten should be(res2)
   }
 
-  /** = Monad instances =
+  /**
+   * = Monad instances =
    *
    * If `Applicative` is already present and `flatten` is well-behaved,
    * extending the `Applicative` to a `Monad` is trivial. To provide evidence
@@ -55,7 +68,6 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
    * }}}
    *
    * Cats already provides a `Monad` instance of `Option`.
-   *
    */
   def monadInstances(res0: Option[Int]) = {
     import cats._
@@ -64,7 +76,8 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Monad[Option].pure(42) should be(res0)
   }
 
-  /** = flatMap =
+  /**
+   * = flatMap =
    *
    * `flatMap` is often considered to be the core function of `Monad`, and cats
    * follows this tradition by providing implementations of `flatten` and `map`
@@ -88,21 +101,24 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Monad[List].flatMap(List(1, 2, 3))(x => List(x, x)) should be(res0)
   }
 
-  /** = ifM =
+  /**
+   * = ifM =
    *
    * `Monad` provides the ability to choose later operations in a sequence based on
    * the results of earlier ones. This is embodied in `ifM`, which lifts an `if`
    * statement into the monadic context.
    */
-  def monadIfm(res0: Option[String], res1: List[Int]) = {
+  def monadIfm(res0: Option[String], res1: List[Int], res2: List[Int]) = {
     import cats._
     import cats.implicits._
 
     Monad[Option].ifM(Option(true))(Option("truthy"), Option("falsy")) should be(res0)
     Monad[List].ifM(List(true, false, true))(List(1, 2), List(3, 4)) should be(res1)
+    Monad[List].ifM(List(false, true, false))(List(1, 2), List(3, 4)) should be(res2)
   }
 
-  /** = Composition =
+  /**
+   * = Composition =
    *
    * Unlike `Functor`s and `Applicative`s, you cannot derive a monad instance for a generic `M[N[_]]`
    * where both `M[_]` and `N[_]` have an instance of a monad.
@@ -113,7 +129,7 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
    *
    * {{{
    * case class OptionT[F[_], A](value: F[Option[A]])
-
+   *
    * implicit def optionTMonad[F[_]](implicit F : Monad[F]) = {
    *   new Monad[OptionT[F, *]] {
    *     def pure[A](a: A): OptionT[F, A] = OptionT(F.pure(Some(a)))
@@ -132,11 +148,19 @@ object MonadSection extends AnyFlatSpec with Matchers with org.scalaexercises.de
    *
    * This sort of construction is called a monad transformer. Cats already provides
    * a monad transformer for `Option` called `OptionT`.
-   *
    */
   def monadComposition(res0: List[Option[Int]]) = {
     import cats.implicits._
 
     optionTMonad[List].pure(42) should be(OptionT(res0))
   }
+
+  /**
+   * There are also instances for other monads available for user in Cats library:
+   *  'EitherT' for 'Either'
+   *  'ReaderT' for 'Reader'
+   *  'WriterT' for 'Writer'
+   *  'StateT' for 'State'
+   *  'IdT' for 'Id'
+   */
 }

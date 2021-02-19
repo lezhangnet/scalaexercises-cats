@@ -1,7 +1,17 @@
 /*
- *  scala-exercises - exercises-cats
- *  Copyright (C) 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2020 47 Degrees Open Source <https://www.47deg.com>
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package catslib
@@ -13,7 +23,8 @@ import ApplyHelpers._
 import cats._
 import cats.implicits._
 
-/** `Apply` extends the `Functor` type class (which features the familiar `map`
+/**
+ * `Apply` extends the `Functor` type class (which features the familiar `map`
  * function) with a new function `ap`. The `ap` function is similar to `map`
  * in that we are transforming a value in a context (a context being the `F` in `F[A]`;
  * a context can be `Option`, `List` or `Future` for example).
@@ -49,7 +60,8 @@ import cats.implicits._
  */
 object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.definitions.Section {
 
-  /** = map =
+  /**
+   * = map =
    *
    * Since `Apply` extends `Functor`, we can use the `map` method from `Functor`:
    */
@@ -65,7 +77,8 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Apply[Option].map(None)(addTwo) should be(res2)
   }
 
-  /** = compose =
+  /**
+   * = compose =
    *
    * And like functors, `Apply` instances also compose:
    */
@@ -75,7 +88,8 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     listOpt.ap(List(Some(plusOne)))(List(Some(1), None, Some(3))) should be(res0)
   }
 
-  /** = ap =
+  /**
+   * = ap =
    *
    * The `ap` method is a method that `Functor` does not have:
    */
@@ -84,7 +98,8 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
       res1: Option[Int],
       res2: Option[Int],
       res3: Option[Int],
-      res4: Option[Int]) = {
+      res4: Option[Int]
+  ) = {
     Apply[Option].ap(Some(intToString))(Some(1)) should be(res0)
     Apply[Option].ap(Some(double))(Some(1)) should be(res1)
     Apply[Option].ap(Some(double))(None) should be(res2)
@@ -92,7 +107,8 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Apply[Option].ap(None)(None) should be(res4)
   }
 
-  /** = ap2, ap3, etc =
+  /**
+   * = ap2, ap3, etc =
    *
    * `Apply` also offers variants of `ap`. The functions `apN` (for `N` between `2` and `22`)
    * accept `N` arguments where `ap` accepts `1`.
@@ -110,10 +126,10 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Apply[Option].ap3(Some(addArity3))(Some(1), Some(2), Some(3)) should be(res2)
   }
 
-  /** = map2, map3, etc =
+  /**
+   * = map2, map3, etc =
    *
    * Similarly, `mapN` functions are available:
-   *
    */
   def applyMapn(res0: Option[Int], res1: Option[Int]) = {
     Apply[Option].map2(Some(1), Some(2))(addArity2) should be(res0)
@@ -121,17 +137,18 @@ object ApplySection extends AnyFlatSpec with Matchers with org.scalaexercises.de
     Apply[Option].map3(Some(1), Some(2), Some(3))(addArity3) should be(res1)
   }
 
-  /** = tuple2, tuple3, etc =
+  /**
+   * = tuple2, tuple3, etc =
    *
    * Similarly, `tupleN` functions are available:
-   *
    */
   def applyTuplen(res0: Option[(Int, Int)], res1: Option[(Int, Int, Int)]) = {
     Apply[Option].tuple2(Some(1), Some(2)) should be(res0)
     Apply[Option].tuple3(Some(1), Some(2), Some(3)) should be(res1)
   }
 
-  /** = apply builder syntax =
+  /**
+   * = apply builder syntax =
    *
    * In order to use functions `apN`, `mapN` and `tupleN` *infix*,
    * import `cats.implicits._`.

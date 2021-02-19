@@ -1,7 +1,17 @@
 /*
- *  scala-exercises - exercises-cats
- *  Copyright (C) 2015-2019 47 Degrees, LLC. <http://www.47deg.com>
+ * Copyright 2016-2020 47 Degrees Open Source <https://www.47deg.com>
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package catslib
@@ -13,7 +23,8 @@ import cats.data.Validated
 
 import ValidatedHelpers._
 
-/** Imagine you are filling out a web form to sign up for an account. You input your username and password and submit.
+/**
+ * Imagine you are filling out a web form to sign up for an account. You input your username and password and submit.
  * Response comes back saying your username can't have dashes in it, so you make some changes and resubmit. Can't
  * have special characters either. Change, resubmit. Passwords need to have at least one capital letter. Change,
  * resubmit. Password needs to have at least one number.
@@ -59,7 +70,7 @@ import ValidatedHelpers._
  * def apply[A](implicit A: Read[A]): Read[A] = A
  *
  * implicit val stringRead: Read[String] =
- *  new Read[String] { def read(s: String): Option[String] = Some(s) }
+ *  new Read[String] { def read(s: String): Option[String] = Option(s) }
  *
  * implicit val intRead: Read[Int] =
  *  new Read[Int] {
@@ -172,7 +183,8 @@ object ValidatedSection
     with Matchers
     with org.scalaexercises.definitions.Section {
 
-  /** When no errors are present in the configuration, we get a `ConnectionParams` wrapped in a `Valid` instance.
+  /**
+   * When no errors are present in the configuration, we get a `ConnectionParams` wrapped in a `Valid` instance.
    */
   def noErrors(res0: Boolean, res1: String, res2: Int) = {
     val config = Config(Map(("url", "127.0.0.1"), ("port", "1337")))
@@ -186,7 +198,8 @@ object ValidatedSection
     valid.getOrElse(ConnectionParams("", 0)) should be(ConnectionParams(res1, res2))
   }
 
-  /** But what happens when having one or more errors? They are accumulated in a `NonEmptyList`
+  /**
+   * But what happens when having one or more errors? They are accumulated in a `NonEmptyList`
    * wrapped in an `Invalid` instance.
    */
   def someErrors(res0: Boolean, res1: Boolean) = {
@@ -205,7 +218,8 @@ object ValidatedSection
     invalid == Validated.invalid(errors) should be(res1)
   }
 
-  /** = Apply =
+  /**
+   * = Apply =
    *
    * Our `parallelValidate` function looks awfully like the `Apply#map2` function.
    *
@@ -220,8 +234,8 @@ object ValidatedSection
    * {{{
    * import cats.Applicative
    *
-   * implicit def validatedApplicative[E : Semigroup]: Applicative[Validated[E, ?]] =
-   * new Applicative[Validated[E, ?]] {
+   * implicit def validatedApplicative[E : Semigroup]: Applicative[Validated[E, *]] =
+   * new Applicative[Validated[E, *]] {
    *  def ap[A, B](f: Validated[E, A => B])(fa: Validated[E, A]): Validated[E, B] =
    *    (fa, f) match {
    *      case (Valid(a), Valid(fab)) => Valid(fab(a))
@@ -259,7 +273,7 @@ object ValidatedSection
    *
    * {{{
    * val personFromConfig: ValidatedNel[ConfigError, Person] =
-   * Apply[ValidatedNel[ConfigError, ?]].map4(config.parse[String]("name").toValidatedNel,
+   * Apply[ValidatedNel[ConfigError, *]].map4(config.parse[String]("name").toValidatedNel,
    *                                         config.parse[Int]("age").toValidatedNel,
    *                                         config.parse[Int]("house_number").toValidatedNel,
    *                                         config.parse[String]("street").toValidatedNel) {
@@ -277,8 +291,8 @@ object ValidatedSection
    * {{{
    * import cats.Monad
    *
-   * implicit def validatedMonad[E]: Monad[Validated[E, ?]] =
-   * new Monad[Validated[E, ?]] {
+   * implicit def validatedMonad[E]: Monad[Validated[E, *]] =
+   * new Monad[Validated[E, *]] {
    *  def flatMap[A, B](fa: Validated[E, A])(f: A => Validated[E, B]): Validated[E, B] =
    *    fa match {
    *      case Valid(a)     => f(a)
@@ -343,7 +357,8 @@ object ValidatedSection
     houseNumber == Validated.invalid(error) should be(res1)
   }
 
-  /** == `withEither` ==
+  /**
+   * == `withEither` ==
    *
    * The `withEither` method allows you to temporarily turn a `Validated` instance into an `Either` instance and apply it to a function.
    *
@@ -357,16 +372,12 @@ object ValidatedSection
    * }}}
    *
    * So we can get `Either`'s short-circuiting behaviour when using the `Validated` type.
-   *
    */
   def validatedAsEither(res0: Boolean, res1: Boolean) = {
     val config = Config(Map("house_number" -> "-42"))
 
     val houseNumber = config.parse[Int]("house_number").withEither {
-      either: Either[ConfigError, Int] =>
-        either.flatMap { i =>
-          positive("house_number", i)
-        }
+      either: Either[ConfigError, Int] => either.flatMap(i => positive("house_number", i))
     }
 
     houseNumber.isValid should be(res0)
